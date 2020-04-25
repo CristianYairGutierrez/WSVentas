@@ -1,15 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using WSVentas.Data.Entities;
+using WSVentas.Data.Repository;
 
 namespace WSVentas.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/clientes")]
     [ApiController]
     public class ClienteController : ControllerBase
     {
+        private readonly IDataRepository<Cliente> _dataRepository;
+
+        public ClienteController(IDataRepository<Cliente> dataRepository)
+        {
+            _dataRepository = dataRepository;
+        }
+
+        [HttpGet]
+        public IActionResult Get()
+        {
+            IEnumerable<Cliente> clientes = _dataRepository.GetAll();
+
+            return Ok(clientes);
+        }
     }
 }

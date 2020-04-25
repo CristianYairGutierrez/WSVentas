@@ -11,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using WSVentas.Data;
+using WSVentas.Data.DataManager;
+using WSVentas.Data.Entities;
+using WSVentas.Data.Repository;
 
 namespace WSVentas
 {
@@ -27,6 +30,7 @@ namespace WSVentas
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<VentasDbContext>(opts => opts.UseSqlServer(Configuration["ConnectionString:VentasDBConnection"]));
+            services.AddScoped<IDataRepository<Cliente>, ClienteManager>();
             services.AddControllers();
         }
 
