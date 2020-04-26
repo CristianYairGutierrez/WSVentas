@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,7 @@ namespace WSVentas
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(Startup));
             services.AddDbContext<VentasDbContext>(opts => opts.UseSqlServer(Configuration["ConnectionString:VentasDBConnection"]));
             services.AddScoped<IDataRepository<Cliente>, ClienteManager>();
             services.AddControllers();
