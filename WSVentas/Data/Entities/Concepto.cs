@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WSVentas.Data.Entities
 {
+    [Table("Conceptos", Schema = "Ingresos")]
     public class Concepto
     {
         [Required]

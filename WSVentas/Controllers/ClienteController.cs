@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WSVentas.Data.Entities;
 using WSVentas.Data.Repository;
+using WSVentas.Models.Response;
 using Modelos = WSVentas.Models;
 
 namespace WSVentas.Controllers
@@ -23,9 +26,13 @@ namespace WSVentas.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            IEnumerable<Cliente> clientes = _dataRepository.GetAll();
+            var clientes = _dataRepository.GetAll();
 
-            return Ok(clientes);
+            var dadaa = clientes.ToList().ConvertAll(r => _mapper.Map<Modelos.Cliente>(r));
+
+            var respuesta = new Respuesta<List<Modelos.Cliente>>(dadaa);
+
+            return Ok(new ApiResponse(respuesta.Contenido));
         }
 
         [HttpGet("{id}", Name = "Get")]
@@ -44,17 +51,23 @@ namespace WSVentas.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Modelos.Cliente cliente)
         {
-            if (cliente == null)
+            try
             {
-                return BadRequest("Employee is null.");
+                if (cliente == null)
+                {
+                    return BadRequest("Employee is null.");
+                }
+
+                //_dataRepository.Add(_mapper.Map<Cliente>(cliente));
+
+                var respuesta = new Respuesta<Modelos.Cliente>(cliente);
+
+                return CreatedAtRoute("Post", respuesta.Contenido);
             }
-
-            _dataRepository.Add(_mapper.Map<Cliente>(cliente));
-
-            return CreatedAtRoute(
-                  "Get",
-                  new { cliente.Id },
-                  cliente);
+            catch (System.Exception ex)
+            {
+                return Ok(new Respuesta(ex.Message, ex.InnerException));
+            }            
         }
 
         [HttpPut("{id}")]

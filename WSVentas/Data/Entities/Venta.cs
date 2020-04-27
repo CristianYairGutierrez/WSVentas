@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WSVentas.Data.Entities
 {
+    [Table("Ventas", Schema = "Ingresos")]
     public class Venta
     {
         [Required]
