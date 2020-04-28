@@ -8,8 +8,6 @@ namespace WSVentas.Models.Response
         public string Mensaje { get; set; }
         public TResult Contenido { get; set; }
 
-        public Respuesta() { }
-
         public Respuesta(TResult contenido, bool exito = true)
         {
             Exito = exito;

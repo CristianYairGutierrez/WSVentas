@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WSVentas.Data.Entities;
 using WSVentas.Data.Repository;
+using WSVentas.ExtensionsMethods;
 using WSVentas.Models.Response;
+using WSVentas.Services.ServiciosCliente;
 using Modelos = WSVentas.Models;
 
 namespace WSVentas.Controllers
@@ -15,12 +15,12 @@ namespace WSVentas.Controllers
     public class ClienteController : ControllerBase
     {
         private readonly IDataRepository<Cliente> _dataRepository;
-        private readonly IMapper _mapper;
+        private readonly IServicioCliente servicioCliente;
 
-        public ClienteController(IDataRepository<Cliente> dataRepository, IMapper mapper)
+        public ClienteController(IDataRepository<Cliente> dataRepository, IServicioCliente servicioCliente)
         {
             _dataRepository = dataRepository;
-            _mapper = mapper;
+            this.servicioCliente = servicioCliente;
         }
 
         [HttpGet]
@@ -28,7 +28,7 @@ namespace WSVentas.Controllers
         {
             var clientes = _dataRepository.GetAll();
 
-            var dadaa = clientes.ToList().ConvertAll(r => _mapper.Map<Modelos.Cliente>(r));
+            var dadaa = clientes.ToList().ConvertAll(r => MapperHelper.Mapper.Map<Modelos.Cliente>(r));
 
             var respuesta = new Respuesta<List<Modelos.Cliente>>(dadaa);
 
@@ -58,11 +58,14 @@ namespace WSVentas.Controllers
                     return BadRequest("Employee is null.");
                 }
 
-                //_dataRepository.Add(_mapper.Map<Cliente>(cliente));
+                var respuesta = servicioCliente.Crear(MapperHelper.Mapper.Map<Cliente>(cliente));
 
-                var respuesta = new Respuesta<Modelos.Cliente>(cliente);
+                if (respuesta.EsError)
+                    return Ok(new Respuesta(respuesta.Mensaje));
 
-                return CreatedAtRoute("Post", respuesta.Contenido);
+                _dataRepository.Add(respuesta.Contenido);
+
+                return Ok(respuesta.Contenido);
             }
             catch (System.Exception ex)
             {
@@ -85,7 +88,7 @@ namespace WSVentas.Controllers
                 return NotFound("The Employee record couldn't be found.");
             }
 
-            _dataRepository.Update(clienteToUpdate, _mapper.Map<Cliente>(cliente));
+            _dataRepository.Update(clienteToUpdate, MapperHelper.Mapper.Map<Cliente>(cliente));
 
             return NoContent();
         }

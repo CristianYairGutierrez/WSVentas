@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WSVentas.Data;
 using WSVentas.Data.DataManager;
+using WSVentas.Services;
 
 namespace WSVentas
 {
@@ -27,6 +28,7 @@ namespace WSVentas
             services.AddControllers();
 
             AdministradorDeDatosServices.AddDependency(services);
+            IoContainerServices.AddDependency(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
